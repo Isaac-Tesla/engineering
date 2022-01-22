@@ -1,4 +1,4 @@
-package database_java;
+package mysql;
 import java.sql.*;
 
 /**

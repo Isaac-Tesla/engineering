@@ -1,4 +1,4 @@
-package database_java;
+package mongodb;
 
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoClients;
