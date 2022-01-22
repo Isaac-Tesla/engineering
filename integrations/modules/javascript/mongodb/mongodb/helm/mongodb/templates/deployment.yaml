@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.mongodb.name }} 
+spec:
+  replicas: {{ .Values.image.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.mongodb.name }} 
+      name: {{ .Values.mongodb.name }} 
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.mongodb.name }} 
+        name: {{ .Values.mongodb.name }} 
+    spec:
+      restartPolicy: {{ .Values.image.restartPolicy }}
+      containers:
+        - name: {{ .Values.mongodb.name }} 
+          image: "{{ .Values.mongodb.repository }}:{{ .Values.mongodb.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.mongodb.service.port }} 
+              protocol: {{ .Values.mongodb.service.protocol }} 
+          volumeMounts:
+          - name: {{ .Values.configmap.init.name }}
+            mountPath: {{ .Values.configmap.init.mountPath }}
+            subPath: {{ .Values.configmap.init.fileName }}   
+      volumes:
+      - name: {{ .Values.configmap.init.name }}
+        configMap:
+          name: {{ .Values.configmap.init.name }}

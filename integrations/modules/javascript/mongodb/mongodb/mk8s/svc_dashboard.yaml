@@ -1,0 +1,16 @@
+# This is a service to remove the need to port-forward the Dashboard every time on Microk8s
+apiVersion: v1
+kind: Service
+metadata:
+  name: microk8s-dashboard
+  namespace: kube-system
+spec:
+  type: NodePort
+  selector:
+    k8s-app: kubernetes-dashboard
+  ports:
+  - protocol: TCP
+    name: dashboard
+    port: 443
+    targetPort: 8443
+    nodePort: 30000

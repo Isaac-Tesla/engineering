@@ -1,0 +1,23 @@
+image:
+  replicaCount: 1
+  pullPolicy: IfNotPresent
+  restartPolicy: Always
+
+mongodb:
+  name: mongodb
+  repository: mongo
+  tag: "5.0.3"
+  service:
+    name: mongodb
+    port: 27017
+    type: NodePort
+    protocol: TCP
+
+configmap:
+  init:
+    name: init-mongo
+    fileName: init-mongo.js
+    credentials:
+      user: ""
+      password: ""
+    mountPath: /docker-entrypoint-initdb.d/init-mongo.js:ro
