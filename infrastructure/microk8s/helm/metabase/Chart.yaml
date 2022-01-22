@@ -1,0 +1,7 @@
+apiVersion: v2
+name: metabase
+description: A Helm chart for Kubernetes
+type: application
+version: 0.41.2
+appVersion: "0.41.2"
+icon: https://cdn.icon-icons.com/icons2/2699/PNG/512/metabase_logo_icon_168103.png

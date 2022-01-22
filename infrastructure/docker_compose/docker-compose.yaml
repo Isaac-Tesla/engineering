@@ -1,0 +1,309 @@
+version: '3.7'
+
+networks:
+  network:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.20.0.0/16
+
+services:
+  zookeeper:
+    hostname: zookeeper
+    container_name: zookeeper
+    image: zookeeper:3.7.0
+    ports:
+      - 2888:2888
+      - 2181:2181
+      - 3888:3888
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - network
+
+  nifi:
+    image: apache/nifi:1.12.1
+    container_name: nifi
+    ports:
+      - 8090:8090
+    environment:
+      - NIFI_WEB_HTTP_PORT=8090
+      - NIFI_CLUSTER_IS_NODE=true
+      - NIFI_CLUSTER_NODE_PROTOCOL_PORT=8082
+      - NIFI_ZK_CONNECT_STRING=zookeeper:2181
+      - NIFI_ELECTION_MAX_WAIT=1 min
+    networks:
+      - network
+      
+
+  spark-master:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    container_name: spark-master
+    hostname: master
+    environment:
+      MASTER: spark://localhost:7077
+      SPARK_WORKER_PORT: 8881
+      SPARK_PUBLIC_DNS: localhost
+    expose:
+      - 7077
+      - 6066
+      - 4040
+    ports:
+      - 4040:4040
+      - 6066:6066
+      - 7077:7077
+      - 8080:8080
+    command: bash -c "/opt/spark/sbin/start-master.sh"
+    volumes:
+      - ./pyspark_code:/pyspark_example
+    networks:
+      - network
+
+  spark-worker-1:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    container_name: spark-worker-1
+    hostname: worker
+    environment:
+      SPARK_PUBLIC_DNS: localhost
+      SPARK_MASTER_PORT: 7077
+      SPARK_WORKER_PORT: 8881
+      SPARK_WORKER_WEBUI_PORT: 8081
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+    links:
+      - spark-master
+    expose:
+      - 8881
+    ports:
+      - 8081:8081
+    command: bash -c "/opt/spark/sbin/start-worker.sh spark://master:7077"
+    volumes:
+      - ./pyspark_code:/pyspark_example
+    networks:
+      - network
+
+  spark-worker-2:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    container_name: spark-worker-2
+    hostname: worker
+    environment:
+      SPARK_PUBLIC_DNS: localhost
+      SPARK_MASTER_PORT: 7077
+      SPARK_WORKER_PORT: 8881
+      SPARK_WORKER_WEBUI_PORT: 8082
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+    links:
+      - spark-master
+    expose:
+      - 8881
+    ports:
+      - 8082:8082
+    command: bash -c "/opt/spark/sbin/start-worker.sh spark://master:7077"
+    volumes:
+      - ./pyspark_code:/pyspark_example
+    networks:
+      - network
+
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:5.0.3
+    ports:
+      - 27017:27017
+    networks:
+      - network
+
+
+  wordpress_db:
+    container_name: wordpress_db
+    image: mysql:8.0
+    ports:
+     - "3307:3306"
+    volumes:
+     - wordpress_db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: yourPassword
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: yourPassword
+    networks:
+      - network
+
+  wordpress:
+    container_name: wordpress
+    depends_on:
+     - wordpress_db
+    image: wordpress:latest
+    ports:
+     - "80:80"
+    volumes:
+     - wordpress_db_l3html:/var/www/html
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3307
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: yourPassword
+    networks:
+      - network
+
+
+  hadoop-datanode:
+    image: bde2020/hadoop-datanode:latest
+    container_name: hadoop-datanode
+    restart: always
+    environment:
+      CORE_CONF_fs_defaultFS: hdfs://hadoop-namenode:8020
+    ports:
+      - "8021:8020"
+    networks:
+      - network
+
+  hadoop-namenode:
+    image: bde2020/hadoop-namenode:latest
+    container_name: hadoop-namenode
+    depends_on:
+      - hadoop-datanode
+    restart: always
+    environment:
+      CORE_CONF_fs_defaultFS: hdfs://hadoop-namenode:8020
+    ports:
+      - "8020:8020"
+    networks:
+      - network
+
+
+  solr:
+    container_name: solr
+    image: solr:8.10.0
+    ports:
+      - 8983:8983
+    networks:
+      - network
+
+
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02
+      - cluster.initial_master_nodes=es01,es02
+      - ES_JAVA_OPTS=-XX:UseAVX=2 -Xms1g -Xmx1g
+      - bootstrap.memory_lock=true
+      # - cluster.routing.allocation.disk.threshold_enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
+    healthcheck:
+      interval: 20s
+      retries: 10
+      test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
+    networks:
+      - network
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01
+      - cluster.initial_master_nodes=es01,es02
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-XX:UseAVX=2 -Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata02:/usr/share/elasticsearch/data
+    ports:
+      - 9201:9200
+    networks:
+      - network
+
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.2
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://es01:9200
+      ELASTICSEARCH_HOSTS: http://es01:9200
+    depends_on:
+      es01:
+        condition: service_healthy
+    healthcheck:
+      interval: 10s
+      retries: 20
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5601/api/status
+    networks:
+      - network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.16.2
+    container_name: logstash
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./docker/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./docker/logstash/pipeline:/usr/share/logstash/pipeline:ro
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+   links:
+     - kib01
+    networks:
+      - network
+    depends_on:
+      - es01
+
+  apm:
+    container_name: apm
+    image: docker.elastic.co/apm/apm-server:7.16.2
+    depends_on:
+      es01:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+    cap_drop: ["ALL"]
+    ports:
+    - 8200:8200
+    command: >
+       apm-server -e
+         -E apm-server.rum.enabled=true
+         -E setup.kibana.host=kibana:5601
+         -E setup.template.settings.index.number_of_replicas=0
+         -E apm-server.kibana.enabled=true
+         -E apm-server.kibana.host=kibana:5601
+         -E output.elasticsearch.hosts=["es01:9200","es02:9201"]
+    healthcheck:
+      interval: 10s
+      retries: 12
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:8200/
+    networks:
+      - network
+    
+
+volumes:
+  wordpress_db_l3html:
+  wordpress_db_data:

@@ -1,0 +1,67 @@
+replicaCount: 1
+
+image:
+  replicaCount: 1
+  pullPolicy: IfNotPresent
+  restartPolicy: Always
+
+microk8s:
+  nodeAffinity: ""
+
+airflow:
+  repository: apache/airflow
+  tag: "2.2.1-python3.9"
+  home: /opt/airflow
+  name: airflow
+  serviceAccount:
+    name: airflow 
+  webserver:
+    name: webserver
+    adminUser:
+      user: ""
+      password: ""
+      firstname: "Admin"
+      surname: "Admin"
+      role: Admin
+      email: "Admin@test.com"
+  scheduler:
+    name: scheduler
+  service:
+    name: webserver
+    port: 8080
+    type: ClusterIP
+    protocol: TCP
+  storage:
+    class: local-airflow-dags-storage
+    volume: local-airflow-dags-pv
+    claim: local-airflow-dags-pv-claim
+    mnt: ""
+
+postgresql:
+  repository: postgres
+  tag: 14.0-alpine
+  credentials:
+    user: ""
+    password: ""
+  service:
+    name: postgres-svc
+    host: postgres-svc.postgres.svc.cluster.local
+    port: 5432
+    protocol: TCP
+    accountName: postgres
+  storage:
+    mnt: /var/lib/postgresql/data
+    db: airflow
+    maintenancedb: postgres
+
+configmap:
+  mountPath: "/config"
+  name: airflow-configmap
+  core:
+    sql_alchemy_conn: ""
+    executor: 'KubernetesExecutor'
+  kubernetes:
+    pod_template_file: "worker-pod-doc.yaml"
+    pod_template_location: "/opt/airflow"
+    pod_template_name: kubernetes-pod-template
+    delete_worker_pods: \"True\"

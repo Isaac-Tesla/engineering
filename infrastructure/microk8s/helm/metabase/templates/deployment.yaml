@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.metabase.name }} 
+spec:
+  replicas: {{ .Values.image.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.metabase.name }} 
+      name: {{ .Values.metabase.name }} 
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.metabase.name }} 
+        name: {{ .Values.metabase.name }} 
+    spec:
+      restartPolicy: {{ .Values.image.restartPolicy }}
+      containers:
+        - name: {{ .Values.metabase.name }} 
+          image: "{{ .Values.metabase.repository }}:{{ .Values.metabase.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.metabase.service.port }} 
+              protocol: {{ .Values.metabase.service.protocol }} 

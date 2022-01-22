@@ -1,0 +1,14 @@
+image:
+  replicaCount: 1
+  pullPolicy: IfNotPresent
+  restartPolicy: Always
+
+metabase:
+  name: metabase
+  repository: metabase/metabase
+  tag: v0.41.2
+  service:
+    name: metabase-ui
+    port: 3000
+    type: NodePort
+    protocol: TCP

@@ -1,0 +1,252 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postgresql.service.name }} 
+spec:
+  replicas: {{ .Values.image.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.postgresql.service.name }} 
+      name: {{ .Values.postgresql.service.name }} 
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.postgresql.service.name }} 
+        name: {{ .Values.postgresql.service.name }} 
+    spec:
+      securityContext:
+        fsGroup: 70
+        runAsUser: 70
+        runAsGroup: 70
+      serviceAccountName: {{ .Values.airflow.serviceAccount.name }} 
+      restartPolicy: {{ .Values.image.restartPolicy }}
+      containers:
+        - name: {{ .Values.postgresql.service.name }} 
+          image: "{{ .Values.postgresql.repository }}:{{ .Values.postgresql.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.postgresql.service.port }} 
+              protocol: {{ .Values.postgresql.service.protocol }} 
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.name }}
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.name }}
+                  key: postgres_password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.name }}
+                  key: postgres_db
+            - name: PGDATA
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.name }}
+                  key: postgres_data
+          volumeMounts:
+          - name: {{ .Values.configmap.name }}
+            mountPath:  {{ .Values.configmap.mountPath }}
+            readOnly: true
+      volumes:
+      - name: {{ .Values.configmap.name }}
+        configMap:
+          name: {{ .Values.configmap.name }}
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ .Values.airflow.name }} 
+spec:
+  replicas: {{ .Values.image.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.airflow.name }} 
+      name: {{ .Values.airflow.name }} 
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.airflow.name }} 
+        name: {{ .Values.airflow.name }} 
+    spec:
+      serviceAccountName: {{ .Values.airflow.serviceAccount.name }} 
+      securityContext:  
+        fsGroup: 0
+        runAsUser: 50000
+      containers:
+      - name: {{ .Values.airflow.webserver.name }}
+        env:
+          - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__core__sql_alchemy_conn
+          - name: AIRFLOW__CORE__DAGS_FOLDER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__core__dags_folder
+          - name: AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__kubernetes__worker_container_repository
+          - name: AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__kubernetes__worker_container_tag
+          - name: AIRFLOW__KUBERNETES__NAMESPACE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__kubernetes__namespace
+          - name: AIRFLOW__KUBERNETES__POD_TEMPLATE_FILE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__kubernetes__pod_template_file
+          - name: AIRFLOW__CORE__LOAD_EXAMPLES
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__core__load_examples
+          - name: AIRFLOW__CORE__EXECUTOR
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__core__executor
+          - name: AIRFLOW__LOGGING__BASE_LOG_FOLDER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__logging__base_log_folder
+          - name: AIRFLOW__SCHEDULER__MIN_FILE_PROCESS_INTERVAL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__scheduler__min_file_process_interval
+          - name: AIRFLOW__KUBERNETES__WORKER_PODS_CREATION_BATCH_SIZE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__kubernetes__worker_pods_creation_batch_size
+          - name: AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__scheduler__dag_dir_list_interval
+        image: "{{ .Values.airflow.repository }}:{{ .Values.airflow.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.airflow.service.port }}
+        volumeMounts:
+        - name: {{ .Values.configmap.name }}
+          mountPath:  {{ .Values.configmap.mountPath }}
+          readOnly: true
+        - name: {{ .Values.configmap.kubernetes.pod_template_name }}
+          mountPath: "{{ .Values.configmap.kubernetes.pod_template_location}}/{{ .Values.configmap.kubernetes.pod_template_file }}"
+          subPath: {{ .Values.configmap.kubernetes.pod_template_file }}
+        - name: {{ .Values.airflow.storage.claim }}
+          mountPath: {{ .Values.airflow.home }}/dags
+        command: ["/bin/sh","-c"]
+        args: ["airflow users create \
+                    --username {{ .Values.airflow.webserver.adminUser.user }} \
+                    --firstname {{ .Values.airflow.webserver.adminUser.firstname }} \
+                    --lastname {{ .Values.airflow.webserver.adminUser.surname }} \
+                    --role {{ .Values.airflow.webserver.adminUser.role }} \
+                    --password {{ .Values.airflow.webserver.adminUser.password }} \
+                    --email {{ .Values.airflow.webserver.adminUser.email }} \
+                && airflow db upgrade \
+                && airflow webserver"]
+      - name: {{ .Values.airflow.scheduler.name }}
+        env:
+          - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__core__sql_alchemy_conn
+          - name: AIRFLOW__CORE__DAGS_FOLDER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__core__dags_folder
+          - name: AIRFLOW__KUBERNETES__WORKER_CONTAINER_REPOSITORY
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__kubernetes__worker_container_repository
+          - name: AIRFLOW__KUBERNETES__WORKER_CONTAINER_TAG
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__kubernetes__worker_container_tag
+          - name: AIRFLOW__KUBERNETES__NAMESPACE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__kubernetes__namespace
+          - name: AIRFLOW__KUBERNETES__POD_TEMPLATE_FILE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__kubernetes__pod_template_file
+          - name: AIRFLOW__CORE__LOAD_EXAMPLES
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__core__load_examples
+          - name: AIRFLOW__CORE__EXECUTOR
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__core__executor
+          - name: AIRFLOW__LOGGING__BASE_LOG_FOLDER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__logging__base_log_folder
+          - name: AIRFLOW__SCHEDULER__MIN_FILE_PROCESS_INTERVAL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__scheduler__min_file_process_interval
+          - name: AIRFLOW__KUBERNETES__WORKER_PODS_CREATION_BATCH_SIZE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__kubernetes__worker_pods_creation_batch_size
+          - name: AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.configmap.name }}
+                key: airflow__scheduler__dag_dir_list_interval
+        image:  "{{ .Values.airflow.repository }}:{{ .Values.airflow.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        volumeMounts:
+        - name: {{ .Values.configmap.name }}
+          mountPath:  {{ .Values.configmap.mountPath }}
+          readOnly: true
+        - name: {{ .Values.configmap.kubernetes.pod_template_name }}
+          mountPath: "{{ .Values.configmap.kubernetes.pod_template_location}}/{{ .Values.configmap.kubernetes.pod_template_file }}"
+          subPath: {{ .Values.configmap.kubernetes.pod_template_file }}
+        - name: {{ .Values.airflow.storage.claim }}
+          mountPath: {{ .Values.airflow.home }}/dags
+        command: ["/bin/sh","-c"]
+        args: ["airflow db init \
+                && airflow scheduler"]
+      restartPolicy: {{ .Values.image.restartPolicy }}
+      volumes:
+      - name: {{ .Values.configmap.name }} 
+        configMap:
+          name: {{ .Values.configmap.name }} 
+      - name: {{ .Values.configmap.kubernetes.pod_template_name }}
+        configMap:
+          name: {{ .Values.configmap.kubernetes.pod_template_name }}
+      - name: {{ .Values.airflow.storage.claim }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.airflow.storage.claim }}

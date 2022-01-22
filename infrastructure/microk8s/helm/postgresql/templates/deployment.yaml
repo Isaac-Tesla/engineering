@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postgres.service.name }} 
+spec:
+  replicas: {{ .Values.image.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.postgres.service.name }} 
+      name: {{ .Values.postgres.service.name }} 
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.postgres.service.name }} 
+        name: {{ .Values.postgres.service.name }} 
+    spec:
+      securityContext:
+        fsGroup: 70
+        runAsUser: 70
+        runAsGroup: 70
+      serviceAccountName: {{ .Values.postgres.service.accountName }} 
+      restartPolicy: {{ .Values.image.restartPolicy }}
+      containers:
+        - name: {{ .Values.postgres.service.name }} 
+          image: "{{ .Values.postgres.repository }}:{{ .Values.postgres.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.postgres.service.port }} 
+              protocol: {{ .Values.postgres.service.protocol }} 
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.postgres.name }}
+                  key: postgres_user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.postgres.name }}
+                  key: postgres_password
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.postgres.name }}
+                  key: postgres_db
+            - name: PGDATA
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.postgres.name }}
+                  key: postgres_data
+          volumeMounts:
+          - name: {{ .Values.configmap.postgres.name }}
+            mountPath:  {{ .Values.configmap.postgres.mountPath }}
+            readOnly: true
+      volumes:
+      - name: {{ .Values.configmap.postgres.name }}
+        configMap:
+          name: {{ .Values.configmap.postgres.name }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.pgadmin.name }} 
+spec:
+  replicas: {{ .Values.image.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.pgadmin.name }} 
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.pgadmin.name }} 
+    spec:
+      serviceAccountName: {{ .Values.postgres.service.accountName }} 
+      restartPolicy: {{ .Values.image.restartPolicy }}
+      containers:
+        - name: {{ .Values.pgadmin.name }} 
+          image: "{{ .Values.pgadmin.repository }}:{{ .Values.pgadmin.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.pgadmin.service.port }} 
+              protocol: {{ .Values.pgadmin.service.protocol }} 
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.postgres.name }}
+                  key: pgadmin_user
+            - name: PGADMIN_DEFAULT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.postgres.name }}
+                  key: pgadmin_password
+            - name: PGADMIN_LISTEN_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configmap.postgres.name }}
+                  key: pgadmin_listen_port
+          volumeMounts:
+          - name: {{ .Values.configmap.postgres.name }}
+            mountPath:  {{ .Values.configmap.postgres.mountPath }}
+            readOnly: true
+          - name: {{ .Values.configmap.servers.name }}
+            mountPath: {{ .Values.configmap.servers.mountPath }}
+            subPath: {{ .Values.configmap.servers.fileName }}         
+      volumes:
+      - name: {{ .Values.configmap.postgres.name }}
+        configMap:
+          name: {{ .Values.configmap.postgres.name }}
+      - name: {{ .Values.configmap.servers.name }}
+        configMap:
+          name: {{ .Values.configmap.servers.name }}

@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configmap.postgres.name }}
+  namespace: {{ .Release.Namespace }}
+data:
+  postgres_user: {{ .Values.postgres.credentials.user }}
+  postgres_password: {{ .Values.postgres.credentials.password }}
+  postgres_db: {{ .Values.postgres.storage.db }}
+  postgres_data: {{ .Values.postgres.storage.mnt }}
+  pgadmin_user: {{ .Values.pgadmin.credentials.user }}
+  pgadmin_password: {{ .Values.pgadmin.credentials.password }}
+  pgadmin_listen_port: "{{ .Values.pgadmin.service.port }}"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configmap.servers.name }}
+  namespace: {{ .Release.Namespace }}
+data:
+  {{ .Values.configmap.servers.fileName }}: |-
+    {
+      "Servers": {
+        "1": {
+          "Name": "postgres",
+          "Group": "Servers",
+          "Host": "{{ .Values.postgres.service.host }}",
+          "Port": "{{ .Values.postgres.service.port }}",
+          "MaintenanceDB": "{{ .Values.postgres.storage.maintenancedb }}",
+          "Username": "{{ .Values.postgres.credentials.user }}",
+          "SSLMode": "prefer",
+          "PassFile": "/pgpassfile"
+        }
+      }
+    }
+
+---

@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.airflow.storage.volume }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  capacity:
+    storage: 500M
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ .Values.airflow.storage.class }}
+  local:
+    path: {{ .Values.airflow.storage.mnt }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - {{ .Values.microk8s.nodeAffinity }}
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: {{ .Values.airflow.storage.class }}
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: Immediate
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Values.airflow.storage.claim }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: {{ .Values.airflow.storage.class }}
+  resources:
+    requests:
+      storage: 500M

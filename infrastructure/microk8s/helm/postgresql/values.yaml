@@ -1,0 +1,42 @@
+image:
+  restartPolicy: Always
+  pullPolicy: IfNotPresent
+  replicaCount: 1
+
+postgres:
+  repository: postgres
+  tag: 14.0-alpine
+  credentials:
+    user: ""
+    password: ""
+  service:
+    name: postgres-svc
+    host: postgres-svc.postgres.svc.cluster.local
+    port: 5432
+    protocol: TCP
+    accountName: postgres
+  storage:
+    mnt: /var/lib/postgresql/data
+    db: demo
+    maintenancedb: postgres
+
+pgadmin:
+  name: pgadmin
+  repository: dpage/pgadmin4
+  tag: "6.1"
+  credentials:
+    user: ""
+    password: ""
+  service:
+    name: pgadmin-svc
+    port: 5050
+    protocol: TCP
+
+configmap:
+  postgres:
+    name: postgres-configmap
+    mountPath: "/config"
+  servers:
+    name: pgadmin-servers-json
+    fileName: "servers.json"
+    mountPath: "/pgadmin4/servers.json"
