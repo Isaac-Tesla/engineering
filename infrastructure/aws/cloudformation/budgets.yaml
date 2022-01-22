@@ -1,0 +1,7 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A new budget.
+
+Resources:
+  BB5CFWO:
+    Type: 'AWS::Budgets::Budget'
+    Properties: {}

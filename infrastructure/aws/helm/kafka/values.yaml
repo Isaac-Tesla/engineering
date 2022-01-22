@@ -1,0 +1,39 @@
+image:
+  replicaCount: 1
+  pullPolicy: IfNotPresent
+  restartPolicy: Always
+
+kafka:
+  name: kafka
+  repository: wurstmeister/kafka
+  tag: 2.13-2.7.0
+  service:
+    name: kafka
+    port: 9092
+    port2: 29092
+    port2_name: kafka-port-2
+    type: NodePort
+    protocol: TCP
+  environment:
+    zookeeper_connect: zookeeper.kafka.svc.cluster.local:2181
+    hostname: kafka
+    listeners: PLAINTEXT://kafka:9092
+    listener_security_protocol_map: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+    inter_broker_listener_name: PLAINTEXT
+    topic_replication_factor: "1"
+
+zookeeper:
+  name: zookeeper
+  repository: zookeeper
+  tag: "3.7.0"
+  service:
+    name: zookeeper
+    ports:
+      client: 2181
+      server_listen: 2888 
+      leader_elect: 3888
+    protocol: TCP
+  environment:
+    anon_login: "yes"
+    client_port: 2181
+    tick_time: 2000

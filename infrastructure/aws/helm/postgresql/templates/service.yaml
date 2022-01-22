@@ -1,0 +1,27 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Values.postgres.service.name }} 
+spec:
+  selector:
+    app: {{ .Values.postgres.service.name }} 
+    name: {{ .Values.postgres.service.name }} 
+  ports:
+  - name: {{ .Values.postgres.service.name }} 
+    protocol: {{ .Values.postgres.service.protocol }} 
+    port: {{ .Values.postgres.service.port }} 
+    targetPort: {{ .Values.postgres.service.port }} 
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Values.pgadmin.name }} 
+spec:
+  type: NodePort
+  selector:
+    app: {{ .Values.pgadmin.name }} 
+  ports:
+  - name: {{ .Values.pgadmin.name }} 
+    protocol: {{ .Values.pgadmin.service.protocol }} 
+    port: {{ .Values.pgadmin.service.port }} 
+    targetPort: {{ .Values.pgadmin.service.port }} 

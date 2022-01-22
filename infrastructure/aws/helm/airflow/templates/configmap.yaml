@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configmap.name }}
+data:
+  postgres_user: {{ .Values.postgresql.credentials.user }}
+  postgres_password: {{ .Values.postgresql.credentials.password }}
+  postgres_db: {{ .Values.postgresql.storage.db }}
+  postgres_data: {{ .Values.postgresql.storage.mnt }}
+
+  airflow__core__sql_alchemy_conn: {{ .Values.configmap.core.sql_alchemy_conn }}
+  airflow__core__dags_folder: "{{ .Values.airflow.home }}/dags"
+  airflow__core__load_examples: "False"
+  airflow__core__executor: {{ .Values.configmap.core.executor }}
+
+  airflow__kubernetes__worker_container_repository: {{ .Values.airflow.repository }}
+  airflow__kubernetes__worker_container_tag: {{ .Values.airflow.tag }}
+  airflow__kubernetes__pod_template_file: "{{ .Values.configmap.kubernetes.pod_template_location }}/{{ .Values.configmap.kubernetes.pod_template_file }}"
+  airflow__kubernetes__namespace: {{ .Release.Namespace }}  
+  airflow__kubernetes__worker_pods_creation_batch_size: "10"
+
+  airflow__logging__base_log_folder: "{{ .Values.airflow.home }}/logs"
+
+  airflow__scheduler__min_file_process_interval: "{{ .Values.airflow.scheduler.min_file_process_interval }}"
+  airflow__scheduler__dag_dir_list_interval: "10"
