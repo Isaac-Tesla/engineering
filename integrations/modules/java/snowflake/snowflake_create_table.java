@@ -1,4 +1,4 @@
-package database_java;
+package snowflake;
 
 import java.sql.DriverManager
 import java.sql.Connection
