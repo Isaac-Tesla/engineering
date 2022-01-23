@@ -12,9 +12,7 @@ else
   exit 1
 fi
 
-export AWS_ACCESS_KEY_ID=$(KEY=$(cat $HOME/.aws/credentials | grep aws_access_key_id); read -ra arr <<<"$KEY"; echo ${arr[2]})
-export AWS_SECRET_ACCESS_KEY=$(KEY=$(cat $HOME/.aws/credentials | grep secret_access_key); read -ra arr <<<"$KEY"; echo ${arr[2]})
-export TF_VAR_s3_bucket_for_terraform_state_file="s3-bucket-for-terraform-state-file"
+export TF_VAR_s3_bucket_for_terraform_state_file="engineering-terraform-state-file"
 
 cd ./terraform/s3
 terraform init \
