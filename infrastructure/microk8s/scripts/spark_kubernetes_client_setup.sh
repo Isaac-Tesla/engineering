@@ -1,16 +1,22 @@
 #!/usr/bin/env bash
 
-# To run Spark on Kubernetes, you must have 
-#   a client setup on your local machine to 
-#   run the driver program and submit jobs.
-#   This code is to install the driver 
-#   program on your local machine.
+<<COMMENT
+
+  Summary:
+  To run Spark on Kubernetes, you must have 
+    a client setup on your local machine to 
+    run the driver program and submit jobs.
+    This code is to install the driver 
+    program on your local machine.
+
+COMMENT
+
 
 SPARK_VERISON=3.2.0
 HADOOP_VERSION=3.2
 SPARK_DIR=/opt/spark
 
-# Ensure your Ubuntu is up to date
+# Ensure Linux is up to date
 sudo apt-get update -y
 sudo apt-get install -y software-properties-common
 sudo apt-get install -y --fix-missing \

@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+<<COMMENT
+
+  Summary:
+  The following code will install Apache Airflow in the 
+    microk8s cluster using Helm. The postgresql credentials 
+    are currently hardcoded for testing purposes only,
+    do NOT use this as a production setup.
+
+COMMENT
+
+
 NAMESPACE=airflow
 HELM_CHART_NAME=airflow
 HELM_CHART_LOCATION=helm/airflow/

@@ -12,6 +12,12 @@ terraform init \
 
 terraform plan -out .terraform_plan
 
-terraform destroy -auto-approve
+read -p "If you continue the displayed plan will be destroyed. Continue? (y/n) " RESP
+if [ "$RESP" = "y" ]; then
+  echo "Continuing..."
+else
+  printf "\nStopping now.\n\n\n"
+  exit 1
+fi
 
-# remove .terraform files.
+terraform destroy -auto-approve

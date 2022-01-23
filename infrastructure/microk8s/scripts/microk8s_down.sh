@@ -1,5 +1,7 @@
 #!/bin/bash
 
-source ./functions/uninstall_microk8s.sh
+# Stop it
+microk8s stop
 
-uninstall_microk8s
+# Uninstall it
+sudo snap remove microk8s
