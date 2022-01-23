@@ -1,0 +1,7 @@
+image:
+  replicaCount: 1
+  pullPolicy: IfNotPresent
+  restartPolicy: Always
+
+jenkins:
+  name: jenkins
