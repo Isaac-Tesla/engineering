@@ -1,14 +1,23 @@
 #!/usr/bin/env bash
 
-# Cloudformation method
-# aws cloudformation deploy \
-#     --template-file ./cloudformation/s3.yaml \
-#     --stack-name s3-bucket
+<<COMMENT
+
+  Summary:
+  The following code will use the existing AWS credentials to add
+	  an S3 bucket using Terraform.
+
+  Note:
+  A Cloudformation template also exists for this, to use instead,
+    run:
+
+      aws cloudformation deploy \
+       --template-file ./cloudformation/s3.yaml \
+       --stack-name s3-bucket
+
+COMMENT
 
 
-# Terraform
-
-# Remember prior to running this to ensure the Terraform State file bucket has been created -> TF_VAR_s3_bucket_for_terraform_state_file= ?
+source ./functions/terraform_continue.sh
 
 export TF_VAR_s3_bucket_for_terraform_state_file="engineering-terraform-state-file"
 
@@ -19,13 +28,5 @@ terraform init \
     -backend-config="region=ap-southeast-2"
 
 terraform plan -out .terraform_plan
-
-read -p "Are you sure you want to continue with this Terraform plan? (y/n) " RESP
-if [ "$RESP" = "y" ]; then
-  echo "Continuing..."
-else
-  printf "\nStopping now.\n\n\n"
-  exit 1
-fi
-
+terraform_continue
 terraform apply .terraform_plan

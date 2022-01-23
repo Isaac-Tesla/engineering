@@ -19,6 +19,8 @@
 COMMENT
 
 
+source ./functions/terraform_continue.sh
+
 export TF_VAR_s3_bucket_for_terraform_state_file="engineering-terraform-state-file"
 export TF_VAR_run_if_file_location="file://$HOME/projects/private/aws/terraform/emr/run-if"
 
@@ -27,13 +29,5 @@ terraform init \
 	-backend-config="bucket=${TF_VAR_s3_bucket_for_terraform_state_file}"
 
 terraform plan -out .terraform_plan
-
-read -p "Is the Terraform plan okay to proceed with? (y/n) " RESP
-if [ "$RESP" = "y" ]; then
-  echo "Continuing with Terraform plan..."
-else
-  printf "\nStopping now.\n\n\n"
-  exit 1
-fi
-
+terraform_continue
 terraform apply .terraform_plan
