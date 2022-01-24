@@ -1,0 +1,1 @@
+﻿Get-ChildItem -Path 'G:\' -Recurse -File *.zip | select DirectoryName,Name | Export-CSV 'U:\file.csv'

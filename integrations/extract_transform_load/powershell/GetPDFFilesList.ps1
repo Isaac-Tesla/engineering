@@ -1,0 +1,1 @@
+Get-ChildItem -Path 'U:\' -Recurse -File *.pdf | select DirectoryName,Name | Export-CSV file.csv 
