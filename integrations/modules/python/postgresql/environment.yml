@@ -1,0 +1,8 @@
+name: postgres
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.2
+  - pip
+  - pip:
+    - -r ./postgres/requirements.txt

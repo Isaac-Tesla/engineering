@@ -1,0 +1,8 @@
+name: mssql
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.2
+  - pip
+  - pip:
+    - -r ./mssql/requirements.txt

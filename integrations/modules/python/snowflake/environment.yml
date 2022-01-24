@@ -1,0 +1,8 @@
+name: snowflake
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.2
+  - pip
+  - pip:
+    - -r ./snowflake_/requirements.txt

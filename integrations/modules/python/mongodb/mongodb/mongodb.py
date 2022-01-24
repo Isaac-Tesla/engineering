@@ -12,7 +12,7 @@ from enum import Enum
 
 
 
-class EnvironmentVariables(Enum):
+class MongoDBCredentials(Enum):
 
     """
     Class Notes
@@ -51,11 +51,11 @@ class MongoDB():
     """
 
     def __init__(self):
-        self.server = EnvironmentVariables.server.value
-        self.port = EnvironmentVariables.port.value
-        self.database = EnvironmentVariables.database.value
-        self.user = EnvironmentVariables.user.value
-        self.password = EnvironmentVariables.password.value
+        self.server = MongoDBCredentials.server.value
+        self.port = MongoDBCredentials.port.value
+        self.database = MongoDBCredentials.database.value
+        self.user = MongoDBCredentials.user.value
+        self.password = MongoDBCredentials.password.value
 
 
     def engine(self):
