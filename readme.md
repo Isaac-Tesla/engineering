@@ -2,7 +2,8 @@
 
 This repo is a catch-all for code examples. It is organised in the following way:
 
-```Engineering     
+```Engineering    
+|- full_stack 
 |- infrastructure    
  \=     
   |- aws    
@@ -13,13 +14,21 @@ This repo is a catch-all for code examples. It is organised in the following way
 |- init
 |- integrations
  \=
+  |- api
+  |- db
   |- etl
-  |- modules
+|- interfaces
 |- machine_learning
 |- statistics   
 ```
 
 </br> 
+
+## Full Stack
+
+Consists of full stack infrastructure, e.g. a Javascript front-end with a MongoDB backend including the code to start the database.
+
+</br>
 
 ## Infrastructure
 
@@ -44,6 +53,12 @@ make init_terraform
 These include APIs, ETL code and database connectivity in the modules folder.
 
 </br> 
+
+## Interfaces
+
+Designs for interfaces to connect through to databases showing dashboards.
+
+</br>
 
 ## Machine Learning
 

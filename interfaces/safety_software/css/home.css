@@ -1,0 +1,570 @@
+div#dockWrapper {
+    width: auto;
+    display: inline-block;
+    position: relative;
+    border-bottom: solid 2px rgba(255,255,255,.35);
+    line-height: 0;
+}
+
+ #osxdock-page {
+    color: #fff;
+    padding-bottom: 2em;
+    margin-bottom: -2em;
+  }
+    #osxdock-page h1, #osxdock-page h2 {
+      color: #fff;
+    }
+  
+  /* Dock styles */
+  div.cap { display: block; height: 100px; width: 40px; background: url(/playground/playground/osx-dock/dock-background-left.png) bottom left no-repeat; }
+  	
+		div.cap.left { position: absolute; bottom: 0px; left: 0px; }
+		div.cap.right { background-position: right bottom; position: absolute; top: 0px; right: 0px; }
+		ul.osx-dock { display: inline-block; height: 130px; padding: 0 40px 0 0; background: url(/playground/playground/osx-dock/dock-background-left.png) no-repeat right bottom; overflow: hidden; margin: 0 0 0 40px; }
+		ul.osx-dock li { display: block; position: relative; float: left; width: 50px; height: 50px; margin: 60px 0 4px 0; -webkit-transition: 0.15s linear; -webkit-transition-property: -webkit-transform margin; text-align: center; }
+		
+		ul.osx-dock li a { display: block; height: 50px; padding: 0 1px; -webkit-transition: 0.15s linear; -webkit-transition-property: -webkit-transform margin; margin: 0;
+		-webkit-box-reflect: below 2px
+			-webkit-gradient(linear, left top, left bottom, from(transparent),
+			color-stop(0.45, transparent), to(rgba(255, 255, 255, 0.25)));
+		}
+		ul.osx-dock li a img { width: 48px; }
+		
+		ul.osx-dock li:hover { 
+			margin-left: 9px; margin-right: 9px;
+			z-index: 200;
+		}
+		ul.osx-dock li:hover a { 
+			-webkit-transform-origin: center bottom;
+			-webkit-transform: scale(1.5);
+		}
+		ul.osx-dock li.nearby { 
+			margin-left: 6px; margin-right: 6px;
+			z-index: 100;
+		}
+		ul.osx-dock li.nearby a { 
+			-webkit-transform-origin: center bottom;
+			-webkit-transform: scale(1.25);
+		}
+
+		ul.osx-dock li span { 	background: rgba(0,0,0,0.75); 
+								position: absolute; 
+								bottom: 80px; 
+								margin: 0 auto; 
+								display: none; width: auto; 
+								font-size: 15px; 
+								font-weight: bold; 
+								padding: 10px 10px; 
+								-webkit-border-radius: 10px; 
+								color: #fff; }
+		ul.osx-dock li:hover span { display: block; }
+		
+		div#dockContainer { position: fixed; bottom: 12px; height: 120px; padding: 50px 0 0; text-align: center; -webkit-border-radius: 6px; -moz-border-radius: 6px; width: 100%; line-height: 1; z-index: 100; }
+		div#dockWrapper { 	width: auto; 
+							display: inline-block; 
+							position: relative; 
+							border-bottom: 
+							solid 2px rgba(255,255,255,.35); 
+							line-height: 0; }
+    #dockContainer, #dockContainer * {
+      -webkit-box-sizing: content-box;
+      -moz-box-sizing: content-box;
+      box-sizing: content-box }
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+/*********************
+ * Graph Holder styles *
+ *********************/
+/** Graph Holder container **/
+.graph-container {
+    position: relative; /* required Y axis stuff, Graph Holder's left and bottom sides to be positions properly */
+    display: inline-block; /* display: table may also work.. */
+    padding: 0; /* let the bars position themselves */
+    list-style: none; /* we don't want to see any default <ul> markers */
+	margin: 40px 0 0 40px;
+	font-size: 0.8em;
+    /* Graph Holder's Background */
+    background-image: -webkit-linear-gradient(left , rgba(255, 255, 255, .3) 100%, transparent 100%);
+    background-image: -moz-linear-gradient(left , rgba(255, 255, 255, .3) 100%, transparent 100%);
+    background-image: -o-linear-gradient(left , rgba(255, 255, 255, .3) 100%, transparent 100%);
+    background-image: -ms-linear-gradient(left , rgba(255, 255, 255, .3) 100%, transparent 100%);
+    background-image: linear-gradient(left , rgba(255, 255, 255, .3) 100%, transparent 100%);
+    background-repeat: no-repeat;
+    background-position: 0 -2.5em;
+}
+/* Graph Holder bottom side */
+.graph-container:before {
+    position: absolute;
+    content: "";
+    bottom: 0;
+    left: -1.25em; /* skew pushes it left, so we move it a bit in opposite direction */
+    width: 100%; /* make sure it is as wide as the whole graph */
+    height: 2.5em;
+    background-color: rgba(183, 183, 183, 1);
+    /* Make it look perspective */
+    -webkit-transform: skew(-45deg);
+    -moz-transform: skew(-45deg);
+    -o-transform: skew(-45deg);
+    -ms-transform: skew(-45deg);
+    transform: skew(-45deg);
+}
+/* Graph Holder left side */
+.graph-container:after {
+    position: absolute;
+    content: "";
+    top: 1.25em; /* skew pushes it up so we move it down a bit */
+    left: -2.5em;
+    width: 2.5em;
+    background-color: rgba(129, 129, 129, 0.4);
+
+    /* Make it look perspective */
+    -webkit-transform: skew(0deg, -45deg);
+    -moz-transform: skew(0deg, -45deg);
+    -o-transform: skew(0deg, -45deg);
+    -ms-transform: skew(0deg, -45deg);
+    transform: skew(0deg, -45deg);
+}
+/* Bars and X-axis labels holder */
+.graph-container > li {
+    float: left; /* Make sure bars are aligned one next to another */
+    position: relative; /* Make sure X-axis labels are positioned relative to this element */
+}
+/* A small hack to make Graph Holder's background side be wide enough
+   ..because our bottom side is skewed and pushed to the right, we have to compensate it in Graph Holder's background */
+.graph-container > li:nth-last-child(2) {
+    margin-right: 2.5em;
+}
+/* X-axis labels */
+.graph-container > li > span {
+    position: absolute;
+    left: -1em;
+    bottom: -2em;
+    width: 100%; /* play with this one if you change perspective depth */
+    text-align: center;
+	font-weight: bold;
+	text-shadow: 1px 1px 1px rgba(255,255,255,0.7);
+	color: #777;
+    font-size: 1.5em;
+}
+
+/*******************************
+ * Graph Y-axis Markers styles *
+ *******************************/
+/* Markers container */
+.graph-container > li:last-child {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+/* Y-axis Markers list */
+.graph-marker-container > li {
+    position: absolute;
+    left: -2.5em;
+    bottom: 0;
+    width: 100%;
+    margin-bottom: 2.5em;
+    list-style: none;
+}
+/* Y-axis lines general styles */
+.graph-marker-container > li:before,
+.graph-marker-container > li:after {
+    content: "";
+    position: absolute;
+    border-style: none none dotted;
+    border-color: rgba(100, 100, 100, .15);
+    border-width: 0 0 .15em;
+    background: rgba(133, 133, 133, .15);
+}
+/* Y-axis Side line */
+.graph-marker-container > li:before {
+    width: 3.55em;
+    height: 0;
+    bottom: -1.22em;
+    left: -.55em;
+    z-index: 2; /* be above .graph-container:after */
+
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+/* Y-axis Background line */
+.graph-marker-container li:after {
+    width: 100%;
+    bottom: 0;
+    left: 2.5em;
+}
+
+/* Y-axis text Label */
+.graph-marker-container span {
+    position: absolute;
+	font-weight: bold;
+	text-shadow: 1px 1px 1px rgba(255,255,255,0.7);
+    top: 1em;
+    left: -3.5em; /* just to push it away from the graph.. */
+    width: 3.5em; /* give it absolute value of left offset */
+    font-size: 1.5em;
+}
+
+/*********************
+ * Graph Bars styles *
+ *********************/
+/* Bar wrapper - hides the inner bar when it goes below the bar, required */
+.bar-wrapper {
+    overflow: hidden;
+}
+/* Bar container - this guy is a real parent of a bar's parts - they all are positioned relative to him */
+.bar-container {
+    position: relative;
+    margin-top: 2.5em; /* should be at least equal to the top offset of background casing */
+    /* because back casing is positioned higher than actual bar */
+    width: 12.5em; /* required, we have to define the width of a bar */
+}
+/* right bottom patch - make sure inner bar's right bottom corner is "cut" when it slides down */
+.bar-container:before {
+    content: "";
+    position: absolute;
+    z-index: 3; /* to be above .bar-inner */
+    bottom: 0;
+    right: 0;
+    /* Use bottom border to shape triangle */
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 2.5em 2.5em;
+    border-color: transparent transparent rgba(183,183,183,1);
+}
+/** BACK CASING **/
+/* Back panel */
+.bar-background {
+    width: 10em;
+    height: 100%;
+    position: absolute;
+    top: -2.5em;
+    left: 2.5em;
+    z-index: 1; /* just for reference */
+}
+.bar-background:before,
+.bar-background:after {
+    content: "";
+    position: absolute;
+}
+/* Bottom panel */
+.bar-background:before {
+    bottom: -2.5em;
+    right: 1.25em;
+    width: 10em;
+    height: 2.5em;
+	-webkit-backface-visibility: hidden;
+    -webkit-transform: skew(-45deg);
+    -moz-transform: skew(-45deg);
+    -o-transform: skew(-45deg);
+    -ms-transform: skew(-45deg);
+    transform: skew(-45deg);
+}
+/* Left back panel */
+.bar-background:after {
+    top: 1.25em;
+    right: 10em;
+    width: 2.5em;
+    height: 100%;
+	-webkit-backface-visibility: hidden;
+    /* skew only the Y-axis */
+    -webkit-transform: skew(0deg, -45deg);
+    -moz-transform: skew(0deg, -45deg);
+    -o-transform: skew(0deg, -45deg);
+    -ms-transform: skew(0deg, -45deg);
+    transform: skew(0deg, -45deg);
+}
+/** FRONT CASING **/
+/* Front panel */
+.bar-foreground {
+    z-index: 3; /* be above .bar-background and .bar-inner */
+}
+.bar-foreground,
+.bar-inner {
+    position: absolute;
+    width: 10em;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.bar-foreground:before,
+.bar-foreground:after,
+.bar-inner:before,
+.bar-inner:after {
+    content: "";
+    position: absolute;
+}
+
+/* Right front panel */
+.bar-foreground:before,
+.bar-inner:before {
+    top: -1.25em;
+    right: -2.5em;
+    width: 2.5em;
+    height: 100%;
+    background-color: rgba(160, 160, 160, .27);
+    -webkit-transform: skew(0deg, -45deg);
+    -moz-transform: skew(0deg, -45deg);
+    -o-transform: skew(0deg, -45deg);
+    -ms-transform: skew(0deg, -45deg);
+    transform: skew(0deg, -45deg);
+}
+
+/* Top front panel */
+.bar-foreground:after,
+.bar-inner:after {
+    top: -2.5em;
+    right: -1.25em;
+    width: 100%;
+    height: 2.5em;
+    background-color: rgba(160, 160, 160, .2);
+    -webkit-transform: skew(-45deg);
+    -moz-transform: skew(-45deg);
+    -o-transform: skew(-45deg);
+    -ms-transform: skew(-45deg);
+    transform: skew(-45deg);
+}
+
+/** BAR's inner block **/
+.bar-inner {
+    z-index: 2; /* to be above .bar-background */
+    top: auto; /* reset position top */
+    background-color: rgba(5, 62, 123, .6);
+    height: 0;
+    bottom: -2.5em;
+    color: transparent; /* hide text values */
+    -webkit-transition: height 0.8s ease-in-out, bottom 0.8s ease-in-out;
+    -moz-transition: height 0.8s ease-in-out, bottom 0.8s ease-in-out;
+    -o-transition: height 0.8s ease-in-out, bottom 0.8s ease-in-out;
+    -ms-transition: height 0.8s ease-in-out, bottom 0.8s ease-in-out;
+    transition: height 0.8s ease-in-out, bottom 0.8s ease-in-out;
+}
+
+
+/* Right panel */
+.bar-inner:before {
+    background-color: rgba(5, 62, 123, .6);
+}
+
+/* Top panel */
+.bar-inner:after {
+    background-color: rgba(47, 83, 122, .7);
+}
+
+/****************
+ * FILL BUTTONS  *
+ ****************/
+input[name^="fill-"] {
+    width: 65px;
+	height: 25px;
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	z-index: 100;
+}
+
+input[name^="fill-"] + label {
+	display: inline-block;
+	margin: 0px;
+	width: 65px;
+	padding: 0px 6px;
+	color: #777;
+	line-height: 20px;	
+	font-size: 13px;
+	text-shadow: 1px 1px 1px #fff;
+	border: 1px solid #fff;
+	background: #ffffff; /* Old browsers */
+	background: -moz-linear-gradient(top, #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* IE10+ */
+	background: linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* W3C */
+	box-shadow: 0px 1px 1px rgba(0,0,0,0.3);
+}
+input[name^="fill-"]:checked + label {
+    background: rgba(34, 35, 36, .7);
+	border-color: #333;
+	color: #fff;
+	text-shadow: none;
+	box-shadow: 0px 1px 1px rgba(255,255,255, 0.4);
+}
+
+/* Change bars fill when a Product is selected */
+/* None */
+input#f-none:checked ~ .graph-container > li:nth-child(1) .bar-inner { height: 0; bottom: -2.5em; }
+input#f-none:checked ~ .graph-container > li:nth-child(2) .bar-inner { height: 0; bottom: -2.5em; }
+input#f-none:checked ~ .graph-container > li:nth-child(3) .bar-inner { height: 0; bottom: -2.5em; }
+input#f-none:checked ~ .graph-container > li:nth-child(4) .bar-inner { height: 0; bottom: -2.5em; }
+input#f-none:checked ~ .graph-container > li:nth-child(5) .bar-inner { height: 0; bottom: -2.5em; }
+input#f-none:checked ~ .graph-container > li:nth-child(6) .bar-inner { height: 0; bottom: -2.5em; }
+input#f-none:checked ~ .graph-container > li:nth-child(7) .bar-inner { height: 0; bottom: -2.5em; }
+/* Product 1 */
+input#f-product1:checked ~ .graph-container > li:nth-child(1) .bar-inner { height: 25%; bottom: 0; }
+input#f-product1:checked ~ .graph-container > li:nth-child(2) .bar-inner { height: 50%; bottom: 0; }
+input#f-product1:checked ~ .graph-container > li:nth-child(3) .bar-inner { height: 75%; bottom: 0; }
+input#f-product1:checked ~ .graph-container > li:nth-child(4) .bar-inner { height: 100%; bottom: 0; }
+input#f-product1:checked ~ .graph-container > li:nth-child(5) .bar-inner { height: 50%; bottom: 0; }
+input#f-product1:checked ~ .graph-container > li:nth-child(6) .bar-inner { height: 25%; bottom: 0; }
+input#f-product1:checked ~ .graph-container > li:nth-child(7) .bar-inner { height: 50%; bottom: 0; }
+input#f-product1:checked ~ .graph-container > li:nth-child(7) .bar-inner { background-color: rgba(5, 123, 5, .3); }
+input#f-product1:checked ~ .graph-container > li:nth-child(7) .bar-inner:before { background-color: rgba(5, 123, 5, .3); } /*RHS colour */
+input#f-product1:checked ~ .graph-container > li:nth-child(7) .bar-inner:after { background-color: rgba(63, 122, 47, .4); } /* top colour */
+/* Product 2 */
+input#f-product2:checked ~ .graph-container > li:nth-child(1) .bar-inner { height: 50%; bottom: 0; }
+input#f-product2:checked ~ .graph-container > li:nth-child(2) .bar-inner { height: 60%; bottom: 0; }
+input#f-product2:checked ~ .graph-container > li:nth-child(3) .bar-inner { height: 25%; bottom: 0; }
+input#f-product2:checked ~ .graph-container > li:nth-child(4) .bar-inner { height: 75%; bottom: 0; }
+input#f-product2:checked ~ .graph-container > li:nth-child(5) .bar-inner { height: 100%; bottom: 0; }
+input#f-product2:checked ~ .graph-container > li:nth-child(6) .bar-inner { height: 50%; bottom: 0; }
+input#f-product2:checked ~ .graph-container > li:nth-child(7) .bar-inner { height: 30%; bottom: 0; }
+input#f-product2:checked ~ .graph-container > li:nth-child(7) .bar-inner { background-color: rgba(5, 123, 5, .3); }
+input#f-product2:checked ~ .graph-container > li:nth-child(7) .bar-inner:before { background-color: rgba(5, 123, 5, .3); } /*RHS colour */
+input#f-product2:checked ~ .graph-container > li:nth-child(7) .bar-inner:after { background-color: rgba(63, 122, 47, .4); } /* top colour */
+/* Product 3 */
+input#f-product3:checked ~ .graph-container > li:nth-child(1) .bar-inner { height: 25%; bottom: 0; }
+input#f-product3:checked ~ .graph-container > li:nth-child(2) .bar-inner { height: 37%; bottom: 0; }
+input#f-product3:checked ~ .graph-container > li:nth-child(3) .bar-inner { height: 97%; bottom: 0; }
+input#f-product3:checked ~ .graph-container > li:nth-child(4) .bar-inner { height: 50%; bottom: 0; }
+input#f-product3:checked ~ .graph-container > li:nth-child(5) .bar-inner { height: 11%; bottom: 0; }
+input#f-product3:checked ~ .graph-container > li:nth-child(6) .bar-inner { height: 45%; bottom: 0; }
+input#f-product3:checked ~ .graph-container > li:nth-child(7) .bar-inner { height: 52%; bottom: 0; }
+input#f-product3:checked ~ .graph-container > li:nth-child(7) .bar-inner { background-color: rgba(5, 123, 5, .3); }
+input#f-product3:checked ~ .graph-container > li:nth-child(7) .bar-inner:before { background-color: rgba(5, 123, 5, .3); } /*RHS colour */
+input#f-product3:checked ~ .graph-container > li:nth-child(7) .bar-inner:after { background-color: rgba(63, 122, 47, .4); } /* top colour */
+
+/****************
+ * SIZE BUTTONS  *
+ ****************/
+input[name^="resize-"] {
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	z-index: 100;
+	width: 70px;
+	height: 35px;
+	z-index: 100;
+}
+/* unselected color switch */
+input[name^="resize-"] + label {
+    color: #fff;
+	display: inline-block;
+    background: rgba(183, 172, 172, .7); 
+	width: 70px;
+	line-height: 35px;
+	height: 35px;
+    text-align: center;
+	position: relative;
+}
+input[name^="resize-"]:checked + label {
+    background: rgba(34, 35, 36, .7);
+    color: #fff;
+	box-shadow: 0px 1px 1px rgba(255,255,255,0.3);
+}
+
+input#graph-small:checked ~ .graph-container .bar-container,
+input#graph-small:checked ~ .graph-container:after,
+input#graph-small:checked ~ .graph-container > li:last-child  {
+    height: 10em;
+}
+
+input#graph-normal:checked ~ .graph-container .bar-container,
+input#graph-normal:checked ~ .graph-container:after,
+input#graph-normal:checked ~ .graph-container > li:last-child  {
+    height: 30em;
+}
+
+input#graph-large:checked ~ .graph-container .bar-container,
+input#graph-large:checked ~ .graph-container:after,
+input#graph-large:checked ~ .graph-container > li:last-child  {
+    height: 60em;
+}
+
+/******************************************************************************
+ **                                                                          **
+ ** VARIABLES                                                                **
+ **                                                                          **
+ ******************************************************************************/
+/****************
+ * SPACING      *
+ ****************/
+/* spacing between bars */
+.graph-container > li .bar-container {
+    margin-right: 1.5em;
+}
+/* spacing before first bar */
+.graph-container > li:first-child {
+    margin-left: 1.5em;
+}
+/* spacing after last bar */
+.graph-container > li:nth-last-child(2) .bar-container {
+    margin-right: 1em;
+}
+
+/****************
+ *    Colors    *
+ ****************/
+/* Bar's Back side */
+.bar-background {
+    background-color: rgba(160, 160, 160, .1);
+}
+/* Bar's Bottom side */
+.bar-background:before {
+    background-color: rgba(160, 160, 160, .2);
+}
+/* Bar's Left Back side */
+.bar-background:after {
+    background-color: rgba(160, 160, 160, .05);
+}
+/* Bar's Front side */
+.bar-foreground {
+    background-color: rgba(160, 160, 160, .1);
+}
+.button-label{
+	font-weight: bold;
+	color: #aaa;
+	line-height: 40px;
+	text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
+	display: inline;
+	margin: 0 10px 0 20px;
+}
+.button-label:before { 
+	content: " "; 
+	white-space: wrap; 
+}
+.main span:first-of-type{
+	margin-left: 0px;
+}
+a{
+	color: #555;
+	text-decoration: none;
+}
+.container{
+	width: 100%;
+	position: relative;
+}
+.main{
+	text-align: center;
+	width: 93%;
+	padding: 30px 50px 50px 50px;
+	border: 1px solid rgba(255,255,255,0.8);
+	box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
+}
+.graphTop{
+	text-align: center;
+	width: 93%;
+	padding: 30px 50px 50px 50px;
+	border: 1px solid rgba(255,255,255,0.8);
+	box-shadow: inset 0 0 4px rgba(0,0,0,0.2);
+}

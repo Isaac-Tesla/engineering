@@ -56,7 +56,7 @@ class MLAPI():
         def get_model():
             if request.method == 'POST':
 
-                data = request.json
+                data = request.json # { "data" : <the data>}
                 input_data = data['data']
 
                 model = tf.keras.models.load_model(model_name) # load the *.h5 model
