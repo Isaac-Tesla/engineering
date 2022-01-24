@@ -14,9 +14,9 @@ This repo is a catch-all for code examples. It is organised in the following way
 |- init
 |- integrations
  \=
-  |- api
-  |- db
-  |- etl
+  |- application_programming_interface
+  |- database
+  |- extract_transform_load
 |- interfaces
 |- machine_learning
 |- statistics   

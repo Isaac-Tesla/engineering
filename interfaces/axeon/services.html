@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/w3.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<head>
+<style>
+img {
+  filter:contrast(140%) brightness(110%);
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="w3-bar w3-black">
+  <a href="index.html" class="w3-button w3-bar-item">Axeon</a>
+  <a href="services.html" class="w3-button w3-bar-item">Services</a>
+  <a href="contact.html" class="w3-button w3-bar-item">Contact Us</a>
+</nav>
+
+<!-- Slide Show -->
+<section>
+  <img class="mySlides" src="img/analytics-50px.jpg" style="width:100%">
+  <img class="mySlides" src="img/cloud-50px.jpg" style="width:100%">
+  <img class="mySlides" src="img/networking-50px.jpg" style="width:100%">
+</section>
+
+
+
+<!-- Services Description -->
+<section class="w3-container w3-center w3-content" style="max-width:600px">
+  <br>
+  <h2 class="w3-wide">Services</h2>
+  <p class="w3-justify">Our service includes a comprehensive consultation to help identify gaps and opportunities, a comprehensive report that includes a project plan with timelines and milestones, a cost analysis, and a schedule. We also offer a suite of quality products that will help you get there quickly and smoothly.</p>
+  <br>
+   
+  
+</section>
+
+
+<!-- Footer -->
+<footer class="w3-container w3-center w3-black">
+  <a href="#"><i class="fa fa-facebook-official"></i></a>
+  <a href="#"><i class="fa fa-pinterest-p"></i></a>
+  <a href="#"><i class="fa fa-twitter"></i></a>
+  <a href="#"><i class="fa fa-flickr"></i></a>
+  <a href="#"><i class="fa fa-linkedin"></i></a>
+  <p class="w3-medium">
+  Copyright © 2020 Axeon - All Rights Reserved. <a href="" target="_blank"></a>
+  </p>
+</footer>
+
+<script>
+// Automatic Slideshow - change image every 3 seconds
+var myIndex = 0;
+carousel();
+
+function carousel() {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  for (i = 0; i < x.length; i++) {
+     x[i].style.display = "none";
+  }
+  myIndex++;
+  if (myIndex > x.length) {myIndex = 1}
+  x[myIndex-1].style.display = "block";
+  setTimeout(carousel, 3000);
+}
+</script>
+
+</body>
+</html>
+
