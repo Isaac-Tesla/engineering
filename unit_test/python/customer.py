@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+import logging
+import logging.config
+from datetime import datetime
+
 
 class Customer:
    name = []
@@ -16,7 +20,12 @@ class Customer:
 
 
 if __name__ == '__main__':
+
+   now = datetime.now()
+   date_time = now.strftime("%Y_%m_%d_%H_%M_%S")
+   logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO, filename=f"log_{date_time}.log")
+
    customer = Customer()
    cust_name = 'Isaac'
-   print('A customer has been added with id ', customer.set_name(f'{cust_name}'))
-   print('The customer associated with id 0 is ', customer.get_name(0))
+   logging.info('Customer added, id = ', customer.set_name(f'{cust_name}'))
+   logging.info('Customer with id 0 is ', customer.get_name(0))
