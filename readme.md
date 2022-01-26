@@ -20,6 +20,7 @@ This repo is a catch-all for code examples. It is organised in the following way
 |- interfaces
 |- machine_learning
 |- statistics   
+|- unit_test
 ```
 
 </br> 
@@ -69,3 +70,9 @@ Various machine learning models demonstrating understanding and application of c
 ## Statistics
 
 These are manually worked answers to statistical problems of a specified nature. Each has been written in Markdown for ease of display.
+
+</br>
+
+## Unit Test
+
+Unit test implementation examples for various classes.
