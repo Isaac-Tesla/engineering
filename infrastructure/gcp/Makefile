@@ -4,11 +4,8 @@ help:
 		| grep -e "^[a-zA-Z0-9_\-]*: *.*## *" \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-init: ## Setup the GCP Cli tool
-	sudo ./scripts/init_gcp.sh
+bigquery_up: ## Setup a BigQuery instance.
+	sudo ./scripts/bigquery_up.sh
 
-init_helm: ## Setup Helm
-	sudo ./scripts/init_helm.sh
-
-init_terraform: ## Setup Terraform
-	sudo ./scripts/init_terraform.sh
+bigquery_down: ## Remove a BigQuery instance.
+	sudo ./scripts/bigquery_down.sh
