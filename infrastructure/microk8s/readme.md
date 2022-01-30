@@ -1,6 +1,6 @@
 # Microk8s
 
-To setup Microk8s infrastructure on the local machine, use the Makefile. To see a list of commands as an on-screen menu, simply type `make`.
+To setup Microk8s on the local machine, use the Makefile. To see a list of commands as an on-screen menu, simply type `make`.
 
 </br>
 
