@@ -63,6 +63,6 @@ Typically will be for deploying infrastructure as code into AWS. These scripts w
 
 ### Terraform
 
-Terraform scripts/modules for creating AWS infrastructure. Typically the provider blocks will require a storage bucket to place the tf.state file as a back-port.
+Terraform scripts/modules for creating AWS infrastructure. Typically the provider blocks will require an S3 storage container to place the tf.state file as a back-port.
 
 </br>
