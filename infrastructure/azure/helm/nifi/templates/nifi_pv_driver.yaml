@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.persistence.drivers.azure_blob.pv.metadataName }}
+spec:
+  capacity:
+    storage: {{ .Values.persistence.drivers.azure_blob.pv.storage }}
+  accessModes:
+    - {{ .Values.persistence.drivers.azure_blob.pv.accessModes }}
+  persistentVolumeReclaimPolicy: {{ .Values.persistence.drivers.azure_blob.pv.persistentVolumeReclaimPolicy }}
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: {{ .Values.persistence.drivers.volumeName }}
+  mountOptions:
+    - -o allow_other
+    - --file-cache-timeout-in-seconds=120
+  csi:
+    driver: {{ .Values.persistence.azure_blob.storageClass.driver }}
+    readOnly: false
+    volumeHandle: {{ .Values.persistence.drivers.azure_blob.pv.volumeHandle }}
+    volumeAttributes:
+      resourceGroup: {{ .Values.persistence.azure_blob.storageClass.resourceGroup }}
+      storageAccount: {{ .Values.persistence.azure_blob.storageClass.storageAccount }}
+      containerName: {{ .Values.persistence.drivers.azure_blob.pv.containerName }}
+    nodeStageSecretRef:
+      name: {{ .Values.persistence.azure_blob.storageClass.secret }}
+      namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.persistence.drivers.azure_blob.pvc.name }}
+  labels:
+    airbyte: {{ .Values.persistence.drivers.azure_blob.pvc.labels }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.drivers.azure_blob.pvc.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.drivers.azure_blob.pvc.storage }}
+  storageClassName: {{ .Values.persistence.azure_blob.storageClass.name }}

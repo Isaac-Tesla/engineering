@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nifi-config
+data:
+  # Zookeeper settings
+  allow_anonymous_login: 'yes'
+  zk_monitor_port: '2181'
+
+  # Nifi settings
+  nifi_web_http_port: '8090'
+  nifi_web_https_port: '9443'
+  nifi_cluster_is_node: 'true'
+  nifi_cluster_node_protocol_port: '8082'
+  nifi_zk_connect_string: 'zk-0.zk-hs.nifi.svc.cluster.local:2181,zk-1.zk-hs.nifi.svc.cluster.local:2181,zk-2.zk-hs.nifi.svc.cluster.local:2181'
+  nifi_election_max_wait: '1 min'
+  nifi_election_max_candidates: '3'
+  nifi_certificate_authority_port: '8443'
+  nifi_cluster_node_load_balance_port: '6342'
+  nifi_home: '/opt/nifi/nifi-current'
+  nifi_log_dir: '/opt/nifi/nifi-current/logs'
+  nifi_toolkit_home: '/opt/nifi/nifi-toolkit-current'
+  nifi_pid_dir: '/opt/nifi/nifi-current/run'
+  nifi_base_dir: '/opt/nifi'

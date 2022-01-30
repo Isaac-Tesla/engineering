@@ -1,0 +1,7 @@
+apiVersion: v2
+name: nifi
+description: A Helm chart for Apache Nifi on Kubernetes
+type: application
+version: 1.15.3
+appVersion: "1.15.3"
+icon: https://nifi.apache.org/assets/images/apache-nifi-logo.svg

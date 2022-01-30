@@ -1,0 +1,201 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nifi-database-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  claimRef:
+    namespace: nifi
+    name: nifi-database-pv-claim
+  storageClassName: azurefile
+  azureFile:
+    secretName: $env-aks-secret
+    shareName: nifi-database-pv
+    readOnly: false
+  mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=1000
+  - gid=1000
+  - mfsymlinks
+  - nobrl
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nifi-database-pv-claim
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nifi-flowfile-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  claimRef:
+    namespace: nifi
+    name: nifi-flowfile-pv-claim
+  storageClassName: azurefile
+  azureFile:
+    secretName: $env-aks-secret
+    shareName: nifi-flowfile-pv
+    readOnly: false
+  mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=1000
+  - gid=1000
+  - mfsymlinks
+  - nobrl
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nifi-content-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  claimRef:
+    namespace: nifi
+    name: nifi-content-pv-claim
+  storageClassName: azurefile
+  azureFile:
+    secretName: $env-aks-secret
+    shareName: nifi-content-pv
+    readOnly: false
+  mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=1000
+  - gid=1000
+  - mfsymlinks
+  - nobrl
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nifi-provenance-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  claimRef:
+    namespace: nifi
+    name: nifi-provenance-pv-claim
+  storageClassName: azurefile
+  azureFile:
+    secretName: $env-aks-secret
+    shareName: nifi-provenance-pv
+    readOnly: false
+  mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=1000
+  - gid=1000
+  - mfsymlinks
+  - nobrl
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nifi-state-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  claimRef:
+    namespace: nifi
+    name: nifi-state-pv-claim
+  storageClassName: azurefile
+  azureFile:
+    secretName: $env-aks-secret
+    shareName: nifi-state-pv
+    readOnly: false
+  mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=1000
+  - gid=1000
+  - mfsymlinks
+  - nobrl
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nifi-flowfile-pv-claim
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 5Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nifi-content-pv-claim
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 5Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nifi-provenance-pv-claim
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 5Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nifi-state-pv-claim
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+ name: zookeeper-sc
+ selfLink: /apis/storage.k8s.io/v1/storageclasses/zookeeper-sc
+ labels:
+   addonmanager.kubernetes.io/mode: EnsureExists
+   kubernetes.io/cluster-service: 'true'
+provisioner: kubernetes.io/azure-disk
+parameters:
+ cachingmode: ReadOnly
+ kind: Managed
+ storageaccounttype: StandardSSD_LRS
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: WaitForFirstConsumer

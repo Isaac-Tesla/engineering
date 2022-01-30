@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nifi
+spec:
+  selector:
+    matchLabels:
+      app: nifi
+  serviceName: nifi-hs
+  replicas: 2
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: OrderedReady
+  template:
+    metadata:
+      labels:
+        app: nifi
+    spec:
+      containers:
+      - name: nifi
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NIFI_CLUSTER_NODE_ADDRESS
+          value: $(HOSTNAME).nifi-hs
+        - name: NIFI_WEB_HTTP_HOST
+          value: $(HOSTNAME).nifi-hs.nifi.svc.cluster.local
+        - name: NIFI_CLUSTER_NODE_PROTOCOL_MAX_THREADS
+          value: "100"
+        - name: NIFI_CLUSTER_IS_NODE
+          valueFrom:
+            configMapKeyRef:
+              name: nifi-config
+              key: nifi_cluster_is_node
+        - name: NIFI_CLUSTER_NODE_PROTOCOL_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: nifi-config
+              key: nifi_cluster_node_protocol_port
+        - name: NIFI_WEB_HTTP_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: nifi-config
+              key: nifi_web_http_port
+        - name: NIFI_WEB_HTTPS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: nifi-config
+              key: nifi_web_https_port
+        - name: NIFI_ZK_CONNECT_STRING
+          valueFrom:
+            configMapKeyRef:
+              name: nifi-config
+              key: nifi_zk_connect_string
+        - name: NIFI_ELECTION_MAX_CANDIDATES
+          valueFrom:
+            configMapKeyRef:
+              name: nifi-config
+              key: nifi_election_max_candidates
+        ports:
+        - containerPort: 8090
+          name: client
+        - containerPort: 8082
+          name: node-port
+        volumeMounts:
+        - name: nifi-drivers
+          mountPath: "/opt/nifi/nifi-current/drivers"
+        - name: nifi-database
+          mountPath: "/opt/nifi/nifi-current/database_repository"
+        - name: nifi-flowfile
+          mountPath: "/opt/nifi/nifi-current/flowfile_repository"
+        - name: nifi-content
+          mountPath: "/opt/nifi/nifi-current/content_repository"
+        - name: nifi-provenance
+          mountPath: "/opt/nifi/nifi-current/provenance_repository"
+        - name: nifi-state
+          mountPath: "/opt/nifi/nifi-current/state"
+        - name: config
+          mountPath: "/config"
+          readOnly: true
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      volumes:
+      - name: config
+        configMap:
+          name: nifi-config
+      - name: nifi-drivers
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.drivers.azure_blob.pvc.name }}
+      - name: nifi-database
+        persistentVolumeClaim:
+          claimName: nifi-database-pv-claim
+      - name: nifi-flowfile
+        persistentVolumeClaim:
+          claimName: nifi-flowfile-pv-claim
+      - name: nifi-content
+        persistentVolumeClaim:
+          claimName: nifi-content-pv-claim
+      - name: nifi-provenance
+        persistentVolumeClaim:
+          claimName: nifi-provenance-pv-claim
+      - name: nifi-state
+        persistentVolumeClaim:
+          claimName: nifi-state-pv-claim

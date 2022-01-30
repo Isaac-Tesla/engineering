@@ -1,0 +1,46 @@
+replicaCount: 1
+
+image:
+  repository: apache/nifi
+  pullPolicy: IfNotPresent
+  tag: "1.15.3"
+
+nifi:
+  name: "nifi"
+
+
+storage:
+  driver:
+    pv:
+      name: nifi
+    pvc:
+      name: nifi-drivers-pv-claim
+
+persistence:
+  enabled: true
+  azure_blob:
+    storageClass:
+      name: "nifi-blob"
+      driver: "blob.csi.azure.com"
+      secret: "aks-secret"
+      reclaimPolicy: "Retain"
+      volumeBindingMode: "Immediate"
+      resourceGroup: "$RESOURCE_GROUP"
+      storageAccount: "$STORAGE_ACCOUNT"
+      secret: "nifi-secret"
+  drivers:
+    volumeName: "nifi-volume-drivers"
+    mountPath: "/var/lib/postgresql"
+    azure_blob:
+      pv:
+        metadataName: "nifi-drivers-blob"
+        storage: "1Gi"
+        accessModes: "ReadWriteMany"
+        persistentVolumeReclaimPolicy: "Retain"
+        volumeHandle: "nifi-drivers-blob"
+        containerName: "nifidrivers"
+      pvc:
+        name: "nifi-volume-drivers"
+        labels: "volume-drivers"
+        accessModes: "ReadWriteMany"
+        storage: "1Gi"

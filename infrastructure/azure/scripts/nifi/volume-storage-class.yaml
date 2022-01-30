@@ -1,0 +1,13 @@
+# https://github.com/kubernetes-sigs/blob-csi-driver/blob/master/deploy/example/e2e_usage.md
+# The storage class must exist prior to running the Helm chart.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nifi-blob
+provisioner: blob.csi.azure.com
+parameters:
+  csi.storage.k8s.io/provisioner-secret-name: nifi-secret
+  csi.storage.k8s.io/provisioner-secret-namespace: ${SECRET_NAMESPACE}
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
