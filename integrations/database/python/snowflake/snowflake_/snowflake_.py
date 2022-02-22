@@ -25,9 +25,9 @@ class SnowflakeCredentials(Enum):
     - password
 
     """
-    account = os.getenv['account']
-    user = os.getenv['user']
-    password = os.getenv['password']
+    account = os.getenv('SNOWFLAKE_URL')
+    user = os.getenv('SNOWFLAKE_USER')
+    password = os.getenv('SNOWFLAKE_PASSWORD')
 
 
 
@@ -39,16 +39,21 @@ class Snowflake_():
         self.password = SnowflakeCredentials.password.value
         
 
-    def _engine(self, warehouse: str, database: str, schema: str) -> snowflake.connector:
+    def _engine(self, warehouse=None, database=None, schema=None) -> snowflake.connector:
         try:
             conn = snowflake.connector.connect(
                     user=self.user,
                     password=self.password,
                     account=self.account
                 )
-            conn.cursor().execute(f"USE WAREHOUSE {warehouse}")
-            conn.cursor().execute(f"USE DATABASE {database}")
-            conn.cursor().execute(f"USE SCHEMA {schema}")
+            if warehouse != None:
+                conn.cursor().execute(f"USE WAREHOUSE {warehouse}")
+            
+            if database != None:
+                conn.cursor().execute(f"USE DATABASE {database}")
+            
+            if schema != None:
+                conn.cursor().execute(f"USE SCHEMA {schema}")
             return conn
         except Exception:
             logging.exception(f"\n\n ERROR: Missing information to create Snowflake engine.")
@@ -132,7 +137,7 @@ class Snowflake_():
             attr = list(dataframe.columns)[i]
             dmap = self.dtype_mapping()
             d_type = list(dataframe.dtypes)[i]
-            snowflake_sql = snowflake_sql + f"{attr} {dmap[str(d_type)]}, "
+            snowflake_sql = snowflake_sql + f"\"{attr}\" {dmap[str(d_type)]}, "
 
         snowflake_sql = snowflake_sql[:-2] + ")"  
 
@@ -150,7 +155,7 @@ class Snowflake_():
 
         engine = self._engine(warehouse=warehouse, database=database, schema=schema)
 
-        dataframe.columns = dataframe.columns.str.upper()
+        # dataframe.columns = dataframe.columns.str.upper()
 
         try: 
             logging.info(f"Starting data upload...")
