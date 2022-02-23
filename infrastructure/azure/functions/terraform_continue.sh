@@ -11,11 +11,11 @@ COMMENT
 
 terraform_continue () {
 
-  read -p "Do you wish to continue with the Terraform plan? (y/n) " RESP
+  read -p "***Do you wish to continue with the Terraform plan? (y/n) " RESP
   if [ "$RESP" = "y" ]; then
     echo "Continuing..."
   else
-    printf "\nNot continuing. Stopped.\n"
+    printf "Stopped."
     exit 1
   fi
 
