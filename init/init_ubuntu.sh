@@ -3,24 +3,58 @@
 <<COMMENT
 
   Summary:
-  The following code will setup Ubuntu for personal use.
+    Sets up Ubuntu 22.04 LTS just the way you want it.
 
-  Installation includes:
-  - MPEG4
-  - Wine
-  - Vulkan GPU Drivers
-  - Moving the Ubuntu dock to the left side from the right side.
-  - Adding Gnome-tweaks to enable clearing all icons.
+  Reference:
+    https://gist.github.com/rbialek/1012262
 
 COMMENT
 
-apt-get update
-apt-get install -y ubuntu-restricted-extras ffmpeg
-dpkg --add-architecture i386
-wget -qO - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
-apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main'
-apt update
-apt install --install-recommends winehq-devel
-apt install libvulkan1 mesa-vulkan-drivers vulkan-utils
-gsettings set org.gnome.shell.extensions.dash-to-dock show-apps-at-top true
-apt-get install gnome-tweaks
+USER=$1
+EMAIL=$2
+
+git config --global user.email "${EMAIL}"
+git config --global user.name "${USER}"
+
+sudo apt-get update
+sudo apt-get upgrade
+
+sudo apt install -y \
+  curl nano git make p7zip-full p7zip-rar \
+  build-essential nghttp2 libnghttp2-dev libssl-dev \
+  libgc1:i386 libgc1 libgupnp-av-1.0-3 libgupnp-dlna-2.0-4 \
+  libldap-common libpython3-dev:i386 libpython3-dev \
+  libtss2-tctildr0 libtss2-tcti-swtpm0 libtss2-tcti-mssim0 \
+  libtss2-tcti-device0 libtss2-tcti-cmd0 libtss2-sys1 
+  libtss2-rc0 libtss2-mu0 libtss2-fapi1 libtss2-esys-3.0.2-0 \
+  python3-wheel-whl python3-setuptools-whl python3-pip-whl \
+  steam:i386 steam-devices btrfs-tools
+
+
+# Setup config file for ssh
+mkdir ~/.ssh
+
+# Create config file for major vendors
+cat << EOF > ~/.ssh/config
+Host git-codecommit.*.amazonaws.com
+  User <INSERT STRING FROM AWS HERE>
+  IdentityFile ~/.ssh/<FILE NAME HERE>
+  PubkeyAcceptedAlgorithms +ssh-rsa
+  HostkeyAlgorithms +ssh-rsa
+
+Host ssh.dev.azure.com
+  IdentityFile ~/.ssh/<FILE NAME HERE>
+  PubkeyAcceptedAlgorithms +ssh-rsa
+  HostkeyAlgorithms +ssh-rsa
+
+Host source.developers.google.com
+  IdentityFile ~/.ssh/<FILE NAME HERE>
+  PubkeyAcceptedAlgorithms +ssh-rsa
+  HostkeyAlgorithms +ssh-rsa
+
+Host github.com
+  User git
+  Hostname github.com
+  PreferredAuthentications publickey
+  IdentityFile /home/user/.ssh/<FILE NAME HERE>
+EOF
