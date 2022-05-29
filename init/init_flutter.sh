@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 
+
 <<COMMENT
 
   Summary:
-  The following code will install flutter on the local machine.
+    Using snap, install flutter.
 
-  The install instructions can be found at:
-  - https://docs.flutter.dev/get-started/install/linux
-
-  Note: If coding for Android, the studio install can be found 
-    here -> https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2020.3.1.26/android-studio-2020.3.1.26-linux.tar.gz
+  Reference:
+    - https://docs.flutter.dev/get-started/install/linux
 
 COMMENT
 

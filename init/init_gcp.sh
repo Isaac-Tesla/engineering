@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
+
 <<COMMENT
 
   Summary:
-  The following code will install the GCP command line interface.
+    Install the GCP SDK tool.
 
-  The install instructions can be found at:
-  - https://cloud.google.com/sdk/docs/install#deb
+  Reference:
+    - https://cloud.google.com/sdk/docs/install#deb
 
 COMMENT
 

@@ -4,7 +4,10 @@
 <<COMMENT
 
   Summary:
-  The following code will install the CUDA drivers and Tensorflow GPU.
+    The following code will install the CUDA drivers and Tensorflow GPU.
+
+  Reference:
+    https://docs.nvidia.com/pdf/CUDA_Installation_Guide_Linux.pdf
 
 COMMENT
 
