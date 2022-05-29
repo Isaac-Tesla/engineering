@@ -44,7 +44,7 @@ mssql: ## Install MSSQL drivers
 	./init_mssql_drivers.sh
 
 net: ## Install .NET for C#.
-	./init_.net.sh
+	sudo ./init_net.sh
 
 nodejs: ## Install NodeJS
 	./init_nodejs.sh
@@ -74,4 +74,4 @@ ubuntu: ## Setup Ubuntu
 	./init_ubuntu.sh
 
 wine: ## Setup Wine
-	/.init_wine.sh
+	./init_wine.sh

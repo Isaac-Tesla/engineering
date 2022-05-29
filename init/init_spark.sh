@@ -39,7 +39,7 @@ echo "export PYSPARK_PYTHON=/usr/bin/python3" >> ~/.profile
 echo SPARK_NO_DAEMONIZE=true > /opt/spark/conf/spark-env.sh
 
 # Add PySpark and common dependencies (e.g. cloud storage)
-pip3 install \
+pip3 install --no-warn-script-location \
   azure-storage-blob \
   apache-beam \
   boto3 \
@@ -62,6 +62,5 @@ pip3 install \
   pymongo \
   pyodbc \
   python-dotenv \
-  ray \
   sqlalchemy \
   snowflake-connector-python
