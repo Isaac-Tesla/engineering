@@ -5,17 +5,18 @@
 
   Summary:
   The following code will install the Azure command line interface.
+  This code is for Ubuntu 22.04 LTS.
 
   Note: Pass through the current subscription when running the 
     command.
 
-    e.g. make sub=<subscriptionId> init_azure
+  To configure:
+    az account set --subscription $(SUBSCRIPTION)
 
 COMMENT
 
 
-SUBSCRIPTION=$1
-curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-snap install kubectl --classic
+sudo apt install -y python3-pip
+sudo pip3 install azure-cli
+
 az login
-az account set --subscription $(SUBSCRIPTION)

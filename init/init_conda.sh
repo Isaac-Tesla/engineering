@@ -14,8 +14,11 @@
 
 COMMENT
 
-ANACONDA_VERSION=Anaconda3-2021.11-Linux-x86_64.sh
+
+sudo apt install -y python3-pip
+
+ANACONDA_VERSION=Anaconda3-2022.05-Linux-x86_64.sh
 wget https://repo.anaconda.com/archive/${ANACONDA_VERSION}
-chmod +x ${ANACONDA_VERSION}
-./${ANACONDA_VERSION}
+sudo chmod +x ${ANACONDA_VERSION}
+sudo ./${ANACONDA_VERSION}
 rm ${ANACONDA_VERSION}

@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 
+
 <<COMMENT
 
   Summary:
-  The following code will install .NET in Linux to enable the use of C#.
+    Installs .Net packages for Ubuntu 21.04 compatibility.
 
-  The install instructions for this can be found at:
-  - https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
+  References:
+    - https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
 
-  To test/confirm setup complete, run:
-
-        dotnet new --help
+  After install:
+    dotnet new --help
 
 COMMENT
 
