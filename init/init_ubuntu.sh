@@ -28,7 +28,7 @@ sudo apt install -y \
   libtss2-tcti-device0 libtss2-tcti-cmd0 libtss2-sys1 
   libtss2-rc0 libtss2-mu0 libtss2-fapi1 libtss2-esys-3.0.2-0 \
   python3-wheel-whl python3-setuptools-whl python3-pip-whl \
-  steam:i386 steam-devices btrfs-tools
+  steam:i386 steam-devices btrfs-tools lib32z1
 
 
 # Setup config file for ssh
